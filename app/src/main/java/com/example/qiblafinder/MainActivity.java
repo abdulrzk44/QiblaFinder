@@ -45,7 +45,13 @@ public class MainActivity extends AppCompatActivity {
 
         webSettings.setJavaScriptEnabled(true);
 
-        this.context = context;
+        if(checkAndRequestPermissions()) {
+            // carry on the normal flow, as the case of  permissions  granted.
+
+        }
+
+        myWebView.setWebViewClient(new WebViewClient());
+        myWebView.loadUrl("https://qiblafinder.withgoogle.com/");
 
         myWebView.setWebChromeClient(new WebChromeClient() {
 
@@ -62,13 +68,14 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        if(checkAndRequestPermissions()) {
-            // carry on the normal flow, as the case of  permissions  granted.
-
+        String permission = Manifest.permission.CAMERA;
+        int grant = ContextCompat.checkSelfPermission(this, permission);
+        if (grant != PackageManager.PERMISSION_GRANTED) {
+            String[] permission_list = new String[1];
+            permission_list[0] = permission;
+            ActivityCompat.requestPermissions(this, permission_list, 1);
         }
 
-        myWebView.setWebViewClient(new WebViewClient());
-        myWebView.loadUrl("https://qiblafinder.withgoogle.com/");
 
 //        WebView webView = (WebView) findViewById(R.id.webview);
 //        webView.getSettings().setLoadsImagesAutomatically(true);
@@ -84,6 +91,22 @@ public class MainActivity extends AppCompatActivity {
 //        webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 //        webView.setWebViewClient(new WebViewClient());
 //        webView.loadUrl("https://qiblafinder.withgoogle.com");
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(MainActivity.this,"permission granted", Toast.LENGTH_SHORT).show();
+                // perform your action here
+
+            } else {
+                Toast.makeText(MainActivity.this,"permission not granted", Toast.LENGTH_SHORT).show();
+            }
+        }
 
     }
 
